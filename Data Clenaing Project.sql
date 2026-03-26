@@ -1,0 +1,117 @@
+CREATE DATABASE CLEANING;
+USE CLEANING;
+
+SELECT * FROM DATA_CLEANINIG;
+
+-- *** CHANGE THE FILE NAME *** --
+
+ALTER TABLE DATA_CLEANINIG
+RENAME TO DATA_CLEANING;
+
+SELECT * FROM DATA_CLEANING;
+
+-- Query 1. Find duplictates in the table --
+
+SELECT CUSTOMER_NAME, EMAIL, CITY, ORDER_DATE, AMOUNT, COUNT(*) 
+FROM DATA_CLEANING
+GROUP BY CUSTOMER_NAME, EMAIL, CITY, ORDER_DATE, AMOUNT
+HAVING COUNT(*) > 1;
+
+-- Query 2. Delete the duplicate records from the table --
+
+DELETE FROM DATA_CLEANING WHERE ORDER_ID NOT IN (
+SELECT ORDER_ID
+FROM (SELECT MIN(ORDER_ID) AS ORDER_ID
+FROM DATA_CLEANING
+GROUP BY CUSTOMER_NAME, EMAIL, CITY, ORDER_DATE, AMOUNT) AS TEMP 
+);
+
+-- Query 3. Find the null value from the Email columns -- 
+
+SELECT * FROM DATA_CLEANING 
+WHERE EMAIL IS NULL;
+
+-- Query 4. Repalce the null value with "UNKNOWN@GMAIL.COM" --
+
+UPDATE DATA_CLEANING
+SET EMAIL = "UNKNOWN@GMAIL.COM"
+WHERE EMAIL IS NULL;
+
+-- Query 5. Detect the invalid email -- 
+
+SELECT * FROM DATA_CLEANING 
+WHERE EMAIL NOT LIKE '%@%.%';
+
+-- Query 6. Fix invalid email -- 
+
+UPDATE DATA_CLEANING 
+SET EMAIL = "rohit@gmail.com"
+WHERE ORDER_ID = 10;
+
+-- Query 7. Fix the extra space in the table -- 
+
+UPDATE DATA_CLEANING 
+SET CUSTOMER_NAME = TRIM(CUSTOMER_NAME);
+
+-- Query 8. Fix spelling name of "City" --
+
+UPDATE DATA_CLEANING
+SET CITY = "Mumbai"
+WHERE CITY = "Mum bai";
+
+-- Quert 9. Remove the extra space from "City" column -- 
+
+UPDATE DATA_CLEANING 
+SET CITY = TRIM(CITY);
+
+-- Query 10. Fix the date formate --
+
+UPDATE DATA_CLEANING
+SET ORDER_DATE = STR_TO_DATE(ORDER_DATE, '%Y-%d-%m')
+WHERE ORDER_DATE REGEXP '^[0-9]{4}-';
+
+-- Query 11. Fix the date formatt(mm-dd-yyyy) --
+
+UPDATE DATA_CLEANING 
+SET ORDER_DATE = STR_TO_DATE(ORDER_DATE, '%m-%d-%Y')
+WHERE ORDER_DATE REGEXP '^[0-9]{2}-[1-3][0-9]-[0-9]{4}';
+
+-- Query 12. Fix the date formatt(dd-mm-yy) --
+
+UPDATE DATA_CLEANING
+SET ORDER_DATE = STR_TO_DATE(ORDER_DATE, '%d-%m-%Y')
+WHERE ORDER_DATE REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}';
+
+-- Query 13. Fix the missed date -- 
+
+SELECT * FROM DATA_CLEANING
+WHERE ORDER_DATE IS NULL;
+
+-- Query 14. Replace the missing date with the value --
+
+UPDATE DATA_CLEANING 
+SET ORDER_DATE = '2024-01-01'
+WHERE ORDER_DATE IS NULL;
+
+-- Query 15. Fix the negative amount --
+
+UPDATE DATA_CLEANING 
+SET AMOUNT = ABS(AMOUNT)
+WHERE AMOUNT < 0;
+
+-- Query 16. Fix the null value in Amount column -- 
+
+UPDATE DATA_CLEANING
+SET AMOUNT = 0
+WHERE AMOUNT IS NULL;
+
+-- Change the data type -- 
+
+ALTER TABLE DATA_CLEANING
+MODIFY ORDER_ID INT,
+MODIFY CUSTOMER_NAME VARCHAR(100),
+MODIFY EMAIL VARCHAR(100),
+MODIFY CITY VARCHAR(100),
+MODIFY ORDER_DATE DATE,
+MODIFY AMOUNT INT;
+
