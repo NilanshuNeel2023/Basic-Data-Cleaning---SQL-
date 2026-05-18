@@ -7,7 +7,7 @@ The objetive of this project to clean the dataset with using basic SQL function.
 The dataset having certain issue which is given below-
 - Duplicate Data
 - Null Values
-- Invalid Formatt
+- Invalid Format
 - Extra spaces in columns
 - Spelling mistake
 - Multiple Date formatt
@@ -35,12 +35,12 @@ The dataset having certain issue which is given below-
 ## SQL concept used:
 - Group by
 - Having
-- Detele
+- DELETE
 - Alter Table
 - Update
 - Where
 - ABS
-- Trimp
+- Trim
 - RegEXP
 
 ## Final step
